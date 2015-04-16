@@ -121,19 +121,21 @@ print minhws
 print maxhws
 print hwmins
 print hwmaxs
-minv=minhws[2]
-if minv>maxhws[2]:minv=maxhws[2]
-if minv>hwmins[2]:minv=hwmins[2]
-if minv>hwmaxs[2]:minv=hwmaxs[2]
+minv=minhws[2].copy()
+if minv>maxhws[2]:minv=maxhws[2].copy()
+if minv>hwmins[2]:minv=hwmins[2].copy()
+if minv>hwmaxs[2]:minv=hwmaxs[2].copy()
 
-maxv=minhws[2]
-if maxv<maxhws[2]:maxv=maxhws[2]
-if maxv<hwmins[2]:maxv=hwmins[2]
-if maxv<hwmaxs[2]:maxv=hwmaxs[2]
+maxv=minhws[2].copy()
+if maxv<maxhws[2]:maxv=maxhws[2].copy()
+if maxv<hwmins[2]:maxv=hwmins[2].copy()
+if maxv<hwmaxs[2]:maxv=hwmaxs[2].copy()
 
-if (1):
+if (0):#gives error in bright colors thresholding?dont know why
     if minv>90:minv=minv-10
     if maxv<240:maxv=maxv+10
+    print minv
+    print maxv
 
 if(0):
     minv=80
