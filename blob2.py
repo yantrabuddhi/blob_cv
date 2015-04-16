@@ -1,7 +1,7 @@
 __author__ = 'mandeep'
 import cv2
 import numpy as np
-
+import time
 # create video capture
 cap = cv2.VideoCapture(0)
 x1=0
@@ -15,7 +15,14 @@ maxhws=[]
 hwmins=[]
 hwmaxs=[]
 
-#greeen
+blur_size=3
+#green blur 4 (max for monitor cam)
+#[ 39 161 173]
+#[ 54 123 135]
+#[ 42  99 201]
+#[ 41 249 120]
+
+#greeen -blur 3
 #[ 38 158 155]
 #[ 63 126 105]
 #[ 59 115 104]
@@ -94,11 +101,16 @@ def find_hsv(hsv):
                 hwmaxs[1]=sp
                 hwmaxs[2]=vp
             #look for h and s h1,s1 h2,s1 h1,s2 h2,s2
+cv2.namedWindow("brt")
+while(1):
+    _,frame = cap.read()
+    cv2.imshow("brt",frame)
+    if cv2.waitKey(33)==1048603:break
 
-_,frame = cap.read()
+cv2.destroyWindow("brt")
 
 # smooth it
-frame = cv2.blur(frame,(3,3))
+frame = cv2.blur(frame,(blur_size,blur_size))#3,3
 
 get_r(frame)
 # convert to hsv and find range of colors
@@ -109,20 +121,37 @@ print minhws
 print maxhws
 print hwmins
 print hwmaxs
+minv=minhws[2]
+if minv>maxhws[2]:minv=maxhws[2]
+if minv>hwmins[2]:minv=hwmins[2]
+if minv>hwmaxs[2]:minv=hwmaxs[2]
 
-color_min=[minhws[0],hwmins[1],80]
-color_max=[maxhws[0],hwmaxs[1],255]
+maxv=minhws[2]
+if maxv<maxhws[2]:maxv=maxhws[2]
+if maxv<hwmins[2]:maxv=hwmins[2]
+if maxv<hwmaxs[2]:maxv=hwmaxs[2]
+
+if (1):
+    if minv>90:minv=minv-10
+    if maxv<240:maxv=maxv+10
+
+if(0):
+    minv=80
+    maxv=250
+
+color_min=[minhws[0],hwmins[1],minv]#80
+color_max=[maxhws[0],hwmaxs[1],maxv]#255
 while(1):
 
     # read the frames
     _,frame = cap.read()
 
     # smooth it
-    frame = cv2.blur(frame,(3,3))
+    frame = cv2.blur(frame,(blur_size,blur_size))
 
     # convert to hsv and find range of colors
     hsv = cv2.cvtColor(frame,cv2.COLOR_BGR2HSV)
-    thresh = cv2.inRange(hsv,np.array((color_min[0], color_min[1], 80)), np.array((color_max[0], color_max[1], 255)))
+    thresh = cv2.inRange(hsv,np.array((color_min[0], color_min[1], color_min[2])), np.array((color_max[0], color_max[1], color_max[2])))
     thresh2 = thresh.copy()
 
     # find contours in the threshold image
@@ -144,7 +173,7 @@ while(1):
     # Show it, if key pressed is 'Esc', exit the loop
     cv2.imshow('frame',frame)
     cv2.imshow('thresh',thresh2)
-    if cv2.waitKey(33)== 27:
+    if cv2.waitKey(33)== 1048603:#27
         break
 
 
