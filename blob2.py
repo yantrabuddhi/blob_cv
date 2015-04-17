@@ -137,8 +137,8 @@ if (0):#gives error in bright colors thresholding?dont know why
     print minv
     print maxv
 
-if(0):
-    minv=80
+if(1):
+    minv=90
     maxv=250
 
 color_min=[minhws[0],hwmins[1],minv]#80
